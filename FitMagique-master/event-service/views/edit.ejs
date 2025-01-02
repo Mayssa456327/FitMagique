@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Event</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+        div {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Edit Event</h1>
+    
+    <form action="/events/<%= event._id %>" method="POST">
+        <div>
+            <label for="typeEvent">Event Type:</label>
+            <input type="text" id="typeEvent" name="typeEvent" value="<%= event.typeEvent %>" required>
+        </div>
+        <div>
+            <label for="Nom_event">Event Name:</label>
+            <input type="text" id="Nom_event" name="Nom_event" value="<%= event.Nom_event %>" required>
+        </div>
+        <div>
+            <label for="Date_event">Event Date:</label>
+            <input type="date" id="Date_event" name="Date_event" value="<%= event.Date_event.toISOString().split('T')[0] %>" required>
+        </div>
+        <div>
+            <label for="Tarif">Event Price:</label>
+            <input type="number" id="Tarif" name="Tarif" value="<%= event.Tarif %>" required>
+        </div>
+        <div>
+            <label for="nbr_participants">Number of Participants:</label>
+            <input type="number" id="nbr_participants" name="nbr_participants" value="<%= event.nbr_participants %>">
+        </div>
+        <div>
+            <label for="id_User">User ID:</label>
+            <input type="number" id="id_User" name="id_User" value="<%= event.id_User %>" required>
+        </div>
+        <div>
+            <button type="submit">Update Event</button>
+        </div>
+    </form>
+
+</body>
+</html>

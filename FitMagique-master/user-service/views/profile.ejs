@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <style>
+      body {
+          font-family: Arial, sans-serif;
+          background-color: #f4f4f4;
+          margin: 0;
+          padding: 20px;
+      }
+      h1 {
+          color: #4CAF50;
+          margin-bottom: 20px;
+      }
+      p {
+          background: white;
+          padding: 10px;
+          border-radius: 5px;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          margin-bottom: 15px;
+      }
+      strong {
+          color: #333;
+      }
+      a {
+          display: inline-block;
+          margin-top: 15px;
+          padding: 10px 15px;
+          background-color: #4CAF50;
+          color: white;
+          text-decoration: none;
+          border-radius: 5px;
+      }
+      a:hover {
+          background-color: #45a049;
+      }
+  </style>
+</head>
+<body>
+
+  <h1>User Profile</h1>
+  <p><strong>Name:</strong> <%= user.NameUser %></p>
+  <p><strong>Email:</strong> <%= user.EmailUser %></p>
+  <p><strong>Sexe:</strong> <%= user.sexeUser %></p>
+  <p><strong>Phone:</strong> <%= user.telUser %></p>
+  <p><strong>Address:</strong> <%= user.adressUser %></p>
+  <p><strong>Role:</strong> <%= user.roleUser %></p>
+
+  <a href="/profile/edit">Edit Profile</a>
+
+</body>
+</html>
