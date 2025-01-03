@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Abon</title>
+  <style>
+      body {
+          font-family: Arial, sans-serif;
+          background-color: #f4f4f4;
+          margin: 0;
+          padding: 20px;
+      }
+      h1 {
+          color: #4CAF50;
+          margin-bottom: 20px;
+      }
+      form {
+          background: white;
+          padding: 20px;
+          border-radius: 5px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          max-width: 400px;
+          margin: auto;
+      }
+      div {
+          margin-bottom: 15px;
+      }
+      label {
+          display: block;
+          margin-bottom: 5px;
+      }
+      input, select {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+      }
+      button {
+          width: 100%;
+          padding: 10px;
+          background-color: #4CAF50;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+      }
+      button:hover {
+          background-color: #45a049;
+      }
+  </style>
+</head>
+<body>
+
+  <h1>Edit Abon</h1>
+  <form action="/abonnements/<%= abon._id %>" method="POST">
+    <div>
+      <label for="id_abon">Abon ID:</label>
+      <input type="number" id="id_abon" name="id_abon" value="<%= abon.id_abon %>" readonly>
+    </div>
+    <div>
+      <label for="type_abon">Subscription Type:</label>
+      <input type="text" id="type_abon" name="type_abon" value="<%= abon.type_abon %>" required>
+    </div>
+    <div>
+      <label for="type_paiemment">Payment Type:</label>
+      <input type="text" id="type_paiemment" name="type_paiemment" value="<%= abon.type_paiemment %>" required>
+    </div>
+    <div>
+      <label for="montant">Amount:</label>
+      <input type="number" id="montant" name="montant" value="<%= abon.montant %>" required>
+    </div>
+    <div>
+      <label for="dateDeb">Start Date:</label>
+      <input type="date" id="dateDeb" name="dateDeb" value="<%= abon.dateDeb.toISOString().split('T')[0] %>" required>
+    </div>
+    <div>
+      <label for="dateFin">End Date:</label>
+      <input type="date" id="dateFin" name="dateFin" value="<%= abon.dateFin.toISOString().split('T')[0] %>" required>
+    </div>
+    <div>
+      <label for="id_user">User ID:</label>
+      <select id="id_user" name="id_user" required>
+        <% users.forEach(user => { %>
+          <option value="<%= user._id %>" <%= abon.id_user.equals(user._id) ? 'selected' : '' %>><%= user.username %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div>
+      <button type="submit">Save Changes</button>
+    </div>
+  </form>
+
+</body>
+</html>
