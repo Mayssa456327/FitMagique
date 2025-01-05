@@ -85,14 +85,7 @@
             <input type="time" id="horaire" name="horaire" required>
         </div>
 
-        <div>
-            <label for="id_User">User:</label>
-            <select id="id_User" name="id_User" required>
-                <% users.forEach(user => { %>
-                    <option value="<%= user._id %>"><%= user.username %></option>
-                <% }) %>
-            </select>
-        </div>
+        
 
         <button type="submit">Create Reservation</button>
     </form>

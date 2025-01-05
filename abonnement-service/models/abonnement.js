@@ -7,7 +7,9 @@ const abonnementSchema = new mongoose.Schema({
   montant: { type: Number, required: true },
   dateDeb: { type: Date, required: true },
   dateFin: { type: Date, required: true },
-  id_User: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  id_User: { type: String, required: false }//,
+
+  //id_User: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
 const Abon = mongoose.model('Abon', abonnementSchema);

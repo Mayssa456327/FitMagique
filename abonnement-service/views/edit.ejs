@@ -79,14 +79,7 @@
       <label for="dateFin">End Date:</label>
       <input type="date" id="dateFin" name="dateFin" value="<%= abon.dateFin.toISOString().split('T')[0] %>" required>
     </div>
-    <div>
-      <label for="id_user">User ID:</label>
-      <select id="id_user" name="id_user" required>
-        <% users.forEach(user => { %>
-          <option value="<%= user._id %>" <%= abon.id_user.equals(user._id) ? 'selected' : '' %>><%= user.username %></option>
-        <% }) %>
-      </select>
-    </div>
+
     <div>
       <button type="submit">Save Changes</button>
     </div>

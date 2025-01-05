@@ -6,6 +6,8 @@ const produitRoutes = require('./routes/produit');
 const multer = require('multer');  
 
 const app = express();
+const methodOverride = require('method-override');
+app.use(methodOverride('_method'));
 
 // Set up views and middlewares
 app.set('view engine', 'ejs');

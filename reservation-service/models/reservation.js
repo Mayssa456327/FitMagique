@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // Assuming you have a User model already defined somewhere
-const User = require('./user'); // Import the User model
+const User = require('./user'); 
 
 const reservationSchema = new mongoose.Schema({
   id_reservation: {
@@ -20,7 +20,7 @@ const reservationSchema = new mongoose.Schema({
   id_User: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User', // This tells Mongoose to reference the User model
-    required: true,
+    required: false,
   },
 });
 

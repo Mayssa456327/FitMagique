@@ -55,7 +55,7 @@
 
   <h1>Edit Product</h1>
   
-  <form action="/produits/<%= produit._id %>" method="POST">
+<form action="/produits/<%= produit._id %>" method="PUT" enctype="multipart/form-data">
     <div>
       <label for="Refproduit">Reference:</label>
       <input type="text" id="Refproduit" name="Refproduit" value="<%= produit.Refproduit %>" required>
@@ -79,6 +79,10 @@
     <div>
       <label for="etatp">State:</label>
       <input type="text" id="etatp" name="etatp" value="<%= produit.etatp %>" required>
+    </div>
+    <div>
+      <label for="images">Upload Images:</label>
+      <input type="file" name="images" multiple><br>
     </div>
     <button type="submit">Save Changes</button>
   </form>

@@ -18,32 +18,28 @@ router.get('/register', (req, res) => {
   res.render('register', { title: 'Register', appName: 'FitMagique' });
 });
 
-// Register a new user
 router.post('/register', async (req, res) => {
-  const { idUser, NameUser, sexeUser, EmailUser, roleUser, telUser, adressUser, password } = req.body;
+  const { NameUser, EmailUser, password } = req.body;
 
-  if (!idUser || !NameUser || !EmailUser || !password) {
+  if (!NameUser || !EmailUser || !password) {
     return res.status(400).json({ error: 'Required fields are missing.' });
   }
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
-      idUser,
       NameUser,
-      sexeUser,
       EmailUser,
-      roleUser,
-      telUser,
-      adressUser,
       password: hashedPassword,
     });
     await user.save();
+    res.redirect('/login');
     res.status(201).json({ message: 'User registered successfully.' });
   } catch (err) {
     res.status(500).json({ error: 'Error registering user.', details: err.message });
   }
 });
+
 
 // Login
 router.post('/login', async (req, res) => {
@@ -76,6 +72,11 @@ router.post('/logout', (req, res) => {
   res.json({ message: 'Logout successful.' });
 });
 
+// Register page
+router.get('/forgot-password', (req, res) => {
+  res.render('forgot-password', { title: 'Forgot Password', appName: 'FitMagique' });
+});
+
 // Forgot Password
 router.post('/forgot-password', async (req, res) => {
   const { EmailUser } = req.body;
@@ -98,13 +99,20 @@ router.post('/forgot-password', async (req, res) => {
     await user.save();
 
     // Simulate sending email (log the token)
-    console.log(`Password reset link: http://localhost:3000/reset-password/${resetToken}`);
+    console.log(`Password reset link: http://localhost:3001/reset-password/${resetToken}`);
 
     res.json({ message: 'Password reset link sent to your email.' });
   } catch (err) {
     res.status(500).json({ error: 'Error sending password reset link.', details: err.message });
   }
 });
+
+// Register page
+router.get('/reset-password/:token', (req, res) => {
+  const { token } = req.params;
+  res.render('reset-password', { token });
+});
+
 
 // Reset Password
 router.post('/reset-password/:token', async (req, res) => {

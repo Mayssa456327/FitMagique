@@ -56,7 +56,7 @@ router.post('/produits', upload.array('images', 5), async (req, res) => {
     const { Refproduit, Nomproduit, Description, Quantite, typep, etatp } = req.body;
 
     // Get the image URLs
-    const images = req.files ? req.files.map(file => `/images/${file.filename}`) : [];
+    const images = req.files ? req.files.map(file => `/public/images/${file.filename}`) : [];
 
     const produit = new Produit({ Refproduit, Nomproduit, Description, Quantite, typep, etatp, images });
     await produit.save();
@@ -70,7 +70,7 @@ router.post('/produits', upload.array('images', 5), async (req, res) => {
 // Route for updating a product with image upload
 router.put('/produits/:id', upload.array('images', 5), async (req, res) => {
   const { Refproduit, Nomproduit, Description, Quantite, typep, etatp } = req.body;
-  const images = req.files ? req.files.map(file => `/images/${file.filename}`) : [];
+  const images = req.files ? req.files.map(file => `/public/images/${file.filename}`) : [];
 
   try {
     const produit = await Produit.findByIdAndUpdate(
@@ -80,6 +80,7 @@ router.put('/produits/:id', upload.array('images', 5), async (req, res) => {
     );
     if (!produit) return res.status(404).json({ message: 'Produit not found' });
     res.json(produit);
+    res.render('/');
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -88,10 +89,13 @@ router.put('/produits/:id', upload.array('images', 5), async (req, res) => {
 // Route for rendering the edit product form
 router.get('/produits/:id/edit', async (req, res) => {
   try {
+    console.log('Fetching product with ID:', req.params.id);
     const produit = await Produit.findById(req.params.id);
     if (!produit) {
+      console.log('Product not found.');
       return res.status(404).send('Produit not found.');
     }
+    console.log('Product found:', produit);
     res.render('edit', { produit });
   } catch (err) {
     console.error('Error fetching the produit for editing:', err);
@@ -100,15 +104,21 @@ router.get('/produits/:id/edit', async (req, res) => {
 });
 
 
-// Delete a product
-router.delete('/produits/:id', async (req, res) => {
+
+// Remplacez `app.post` par `router.post`
+router.post('/produits/:id/delete', async (req, res) => {
   try {
     const produit = await Produit.findByIdAndDelete(req.params.id);
-    if (!produit) return res.status(404).json({ message: 'Produit not found' });
-    res.json({ message: 'Produit deleted' });
+    if (!produit) {
+      return res.status(404).send('Produit not found.');
+    }
+    res.redirect('/produits');
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('Error deleting the Produit:', err);
+    res.status(500).send('Error deleting the Produit.');
   }
 });
+
+
 
 module.exports = router;

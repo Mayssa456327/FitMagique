@@ -53,7 +53,7 @@
 
     <h1>Add a New Abonnement</h1>
 
-    <form action="/abonnements" method="POST">
+    <form action="/abonnements/new" method="POST">
         <label for="id_abon">Abonnement ID:</label>
         <input type="text" name="id_abon" required>
 
@@ -72,12 +72,7 @@
         <label for="dateFin">End Date:</label>
         <input type="date" name="dateFin" required>
 
-        <label for="id_user">User:</label>
-        <select name="id_user" required>
-            <% users.forEach(user => { %>
-                <option value="<%= user._id %>"><%= user.username %></option>
-            <% }) %>
-        </select>
+    
 
         <button type="submit">Add Abonnement</button>
     </form>

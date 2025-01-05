@@ -34,13 +34,13 @@ app.get('/', async (req, res) => {
 
 // Add a new reservation
 app.post('/reservations', async (req, res) => {
-    const { id_reservation, DateR, horaire, id_User } = req.body;
+    const { id_reservation, DateR, horaire } = req.body;
 
-    if (!id_reservation || !DateR || !horaire || !id_User) {
+    if (!id_reservation || !DateR || !horaire ) {
         return res.status(400).send('All fields are required.');
     }
 
-    const reservation = new Reservation({ id_reservation, DateR, horaire, id_User });
+    const reservation = new Reservation({ id_reservation, DateR, horaire });
 
     try {
         await reservation.save();
@@ -79,12 +79,12 @@ app.get('/reservations/:id/edit', async (req, res) => {
 
 // Update a reservation
 app.post('/reservations/:id', async (req, res) => {
-    const { DateR, horaire, id_User } = req.body;
+    const { DateR, horaire } = req.body;
 
     try {
         const updatedReservation = await Reservation.findByIdAndUpdate(
             req.params.id,
-            { DateR, horaire, id_User },
+            { DateR, horaire },
             { new: true, runValidators: true }
         );
         if (!updatedReservation) {

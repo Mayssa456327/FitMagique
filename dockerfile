@@ -22,4 +22,4 @@ EXPOSE 5000
 
 
 # Start the application
-CMD ["node", "gateway"]
+CMD ["node", "gateway.js"]

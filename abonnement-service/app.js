@@ -28,7 +28,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/abonnementDB', {
 app.get('/abonnements', async (req, res) => {
   try {
     const abonnements = await Abon.find().populate('id_User', 'username');
-    console.log(abonnements); // Log the fetched abonnements
     res.render('index', { abonnements });
   } catch (err) {
     console.error('Error fetching abonnements:', err);
@@ -39,7 +38,6 @@ app.get('/abonnements', async (req, res) => {
 // Add new Abonnement
 app.get('/abonnements/new', async (req, res) => {
   try {
-    // Fetch users from the database to populate the dropdown
     const users = await User.find();
     res.render('new', { users });
   } catch (err) {
@@ -48,23 +46,10 @@ app.get('/abonnements/new', async (req, res) => {
   }
 });
 
-
 app.post('/abonnements/new', async (req, res) => {
-  console.log('Request Body:', req.body);  // Log the full body to inspect the fields
-  console.log('Checking for missing fields:');
-  console.log({
-    id_abon: req.body.id_abon,
-    type_abon: req.body.type_abon,
-    type_paiemment: req.body.type_paiemment,
-    montant: req.body.montant,
-    dateDeb: req.body.dateDeb,
-    dateFin: req.body.dateFin,
-    id_user: req.body.id_user
-  });
+  const { id_abon, type_abon, type_paiemment, montant, dateDeb, dateFin } = req.body;
 
-  const { id_abon, type_abon, type_paiemment, montant, dateDeb, dateFin, id_user } = req.body;
-
-  if (!id_abon || !type_abon || !type_paiemment || !montant || !dateDeb || !dateFin || !id_user) {
+  if (!id_abon || !type_abon || !type_paiemment || !montant || !dateDeb || !dateFin ) {
     return res.status(400).send('All fields are required.');
   }
 
@@ -75,7 +60,7 @@ app.post('/abonnements/new', async (req, res) => {
     montant,
     dateDeb,
     dateFin,
-    id_user
+    
   });
 
   try {
@@ -87,14 +72,13 @@ app.post('/abonnements/new', async (req, res) => {
 });
 
 // Update an Abon
-
 app.post('/abonnements/:id', async (req, res) => {
-  const { type_abon, type_paiemment, montant, dateDeb, dateFin, id_user } = req.body;
+  const { type_abon, type_paiemment, montant, dateDeb, dateFin } = req.body;
 
   try {
     const updatedAbon = await Abon.findByIdAndUpdate(
       req.params.id,
-      { type_abon, type_paiemment, montant, dateDeb, dateFin, id_user },
+      { type_abon, type_paiemment, montant, dateDeb, dateFin },
       { new: true, runValidators: true }
     );
     if (!updatedAbon) {
@@ -105,6 +89,8 @@ app.post('/abonnements/:id', async (req, res) => {
     res.status(500).send('Error updating the abon.');
   }
 });
+
+// Edit an Abon
 app.get('/abonnements/:id/edit', async (req, res) => {
   try {
     const abon = await Abon.findById(req.params.id);
@@ -112,19 +98,14 @@ app.get('/abonnements/:id/edit', async (req, res) => {
       return res.status(404).send('Abon not found.');
     }
 
-    // Fetch users to populate the dropdown
     const users = await User.find();
-
     res.render('edit', { abon, users });
   } catch (err) {
-    console.error('Error fetching the abonnement for editing:', err);
     res.status(500).send('Unable to load the edit form.');
   }
 });
 
-
-
-// Delete an Abon
+// Delete an Abon (change to DELETE method for RESTful convention)
 app.post('/abonnements/:id/delete', async (req, res) => {
   try {
     const deletedAbon = await Abon.findByIdAndDelete(req.params.id);
@@ -133,8 +114,10 @@ app.post('/abonnements/:id/delete', async (req, res) => {
     }
     res.redirect('/abonnements');
   } catch (err) {
+    console.error('Error deleting the reservation:', err);
     res.status(500).send('Error deleting the abon.');
   }
 });
+
 
 module.exports = app;
