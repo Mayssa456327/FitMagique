@@ -2,22 +2,36 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const path = require('path'); // Add this line
 const User = require('../models/user');
 const router = express.Router();
 
-const JWT_SECRET = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZFVzZXIiOjEsIkVtYWlsVXNlciI6ImpvaG5AZXhhbXBsZS5jb20iLCJpYXQiOjE3MzU1OTg2ODQsImV4cCI6MTczNTYwMjI4NH0.pSHzyW_h7RnocvBSYO6EhwEBfU0jhXmg1nzvpUp4WpM';
+// JWT Secret and Expiry
+const JWT_SECRET = 'your_jwt_secret';
 const JWT_EXPIRES = '1h';
-// Login page
-router.get('/login', (req, res) => {
-  res.render('login', { title: 'Login', appName: 'FitMagique' });
-});
 
-// Register page
+// Middleware to verify JWT token
+function verifyToken(req, res, next) {
+  const token = req.headers['authorization'];
+  
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded; // Attach decoded user info to request
+    next();
+  } catch (err) {
+    res.status(403).json({ error: 'Invalid or expired token' });
+  }
+}
+
+// Register page (GET)
 router.get('/register', (req, res) => {
   res.render('register', { title: 'Register', appName: 'FitMagique' });
 });
 
+// Register (POST)
 router.post('/register', async (req, res) => {
   const { NameUser, EmailUser, password } = req.body;
 
@@ -26,20 +40,29 @@ router.post('/register', async (req, res) => {
   }
 
   try {
+    // Check if user already exists
+    const existingUser = await User.findOne({ EmailUser });
+    if (existingUser) {
+      return res.status(400).json({ error: 'User already exists with this email.' });
+    }
+
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
       NameUser,
       EmailUser,
       password: hashedPassword,
     });
+
+    // Save user to database
     await user.save();
-    res.redirect('/login');
-    res.status(201).json({ message: 'User registered successfully.' });
+    
+    // Redirect to login after successful registration
+    res.redirect('/api/auth/login'); // Redirect to login page
   } catch (err) {
     res.status(500).json({ error: 'Error registering user.', details: err.message });
   }
 });
-
 
 // Login
 router.post('/login', async (req, res) => {
@@ -67,17 +90,23 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Logout (Invalidate token on client-side)
+// Login page
+router.get('/login', (req, res) => {
+  res.render('login', { title: 'Login', appName: 'FitMagique' });
+});
+
+// Logout (POST)
 router.post('/logout', (req, res) => {
+  // Typically, you would invalidate the JWT on the client side (e.g., by deleting the token from localStorage)
   res.json({ message: 'Logout successful.' });
 });
 
-// Register page
+// Forgot Password (GET)
 router.get('/forgot-password', (req, res) => {
   res.render('forgot-password', { title: 'Forgot Password', appName: 'FitMagique' });
 });
 
-// Forgot Password
+// Forgot Password (POST)
 router.post('/forgot-password', async (req, res) => {
   const { EmailUser } = req.body;
 
@@ -107,14 +136,13 @@ router.post('/forgot-password', async (req, res) => {
   }
 });
 
-// Register page
+// Reset Password (GET)
 router.get('/reset-password/:token', (req, res) => {
   const { token } = req.params;
   res.render('reset-password', { token });
 });
 
-
-// Reset Password
+// Reset Password (POST)
 router.post('/reset-password/:token', async (req, res) => {
   const { token } = req.params;
   const { newPassword } = req.body;
@@ -140,23 +168,15 @@ router.post('/reset-password/:token', async (req, res) => {
   }
 });
 
-// View Profile
-router.get('/profile', async (req, res) => {
-  const token = req.headers['authorization'];
-
-  if (!token) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
-
+// View Profile (GET)
+router.get('/profile', verifyToken, async (req, res) => {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await User.findOne({ idUser: decoded.idUser });
+    const user = await User.findOne({ idUser: req.user.idUser });
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Return user profile details
     res.json({
       idUser: user.idUser,
       NameUser: user.NameUser,
@@ -171,18 +191,12 @@ router.get('/profile', async (req, res) => {
   }
 });
 
-// Edit Profile
-router.put('/profile', async (req, res) => {
-  const token = req.headers['authorization'];
+// Edit Profile (PUT)
+router.put('/profile', verifyToken, async (req, res) => {
   const { NameUser, sexeUser, telUser, adressUser } = req.body;
 
-  if (!token) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
-
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await User.findOne({ idUser: decoded.idUser });
+    const user = await User.findOne({ idUser: req.user.idUser });
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -201,6 +215,5 @@ router.put('/profile', async (req, res) => {
     res.status(500).json({ error: 'Error updating profile', details: err.message });
   }
 });
-
 
 module.exports = router;

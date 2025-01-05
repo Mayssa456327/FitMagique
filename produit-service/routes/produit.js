@@ -60,7 +60,8 @@ router.post('/produits', upload.array('images', 5), async (req, res) => {
 
     const produit = new Produit({ Refproduit, Nomproduit, Description, Quantite, typep, etatp, images });
     await produit.save();
-    res.status(201).json(produit);
+    //res.status(201).json(produit);
+    res.redirect('/produits');
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -70,7 +71,7 @@ router.post('/produits', upload.array('images', 5), async (req, res) => {
 // Route for updating a product with image upload
 router.put('/produits/:id', upload.array('images', 5), async (req, res) => {
   const { Refproduit, Nomproduit, Description, Quantite, typep, etatp } = req.body;
-  const images = req.files ? req.files.map(file => `/public/images/${file.filename}`) : [];
+  //const images = req.files ? req.files.map(file => `/public/images/${file.filename}`) : [];
 
   try {
     const produit = await Produit.findByIdAndUpdate(
@@ -80,7 +81,7 @@ router.put('/produits/:id', upload.array('images', 5), async (req, res) => {
     );
     if (!produit) return res.status(404).json({ message: 'Produit not found' });
     res.json(produit);
-    res.render('/');
+    res.render('/produits');
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -97,13 +98,12 @@ router.get('/produits/:id/edit', async (req, res) => {
     }
     console.log('Product found:', produit);
     res.render('edit', { produit });
+    
   } catch (err) {
     console.error('Error fetching the produit for editing:', err);
     res.status(500).send('Unable to load the edit form.');
   }
 });
-
-
 
 // Remplacez `app.post` par `router.post`
 router.post('/produits/:id/delete', async (req, res) => {
